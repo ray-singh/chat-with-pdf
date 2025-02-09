@@ -19,7 +19,7 @@ export default function Home() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="flex-col items-center text-center">
           <div className="flex items-center justify-center">
-            <h1 className="mr-3 text-5xl font-semibold">Chat with any PDF!</h1>
+            <h1 className="mr-3 text-5xl font-semibold">Doxly - Chat with any PDF!</h1>
             <UserButton afterSignOutUrl="/" />
           </div>
 
