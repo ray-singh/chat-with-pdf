@@ -68,7 +68,7 @@ const ChatComponent = ({ chatId }: Props) => {
             placeholder="Ask any question..." // Placeholder text
             className="w-full" // Make the input take full width
           />
-          <Button className="bg-blue-600 ml-2"> {/* Send button */}
+          <Button  type="submit" className="bg-blue-600 ml-2"> {/* Send button */}
             <Send className="h-4 w-4" /> {/* Send icon inside the button */}
           </Button>
         </div>
@@ -77,4 +77,4 @@ const ChatComponent = ({ chatId }: Props) => {
   );
 };
 
-export default ChatComponent; // Exporting the ChatComponent for use in other parts of the app
+export default ChatComponent; 

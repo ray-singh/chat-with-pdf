@@ -1,42 +1,62 @@
-'use client'; // Ensure the component is client-side only
-
 import { Button } from "@/components/ui/button";
-import { UserButton, useAuth } from "@clerk/nextjs";
+import { UserButton } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
-import {LogIn} from 'lucide-react'
+import { ArrowRight, LogIn } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
+import { checkSubscription } from "@/lib/subscription";
+import SubscriptionButton from "@/components/SubscriptionButton";
+import { db } from "@/lib/db";
+import { chats } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
-export default function Home() {
-  const { isLoaded, isSignedIn } = useAuth(); // Get auth state
-
-  // Show loading state while Clerk is loading
-  if (!isLoaded) {
-    return <div>Loading...</div>;
+export default async function Home() {
+  const { userId } = await auth();
+  const isAuth = !!userId;
+  const isPro = await checkSubscription();
+  let firstChat;
+  if (userId) {
+    firstChat = await db.select().from(chats).where(eq(chats.userId, userId));
+    if (firstChat) {
+      firstChat = firstChat[0];
+    }
   }
-
   return (
     <div className="w-screen min-h-screen bg-gradient-to-r from-indigo-200 via-red-200 to-yellow-100">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="flex-col items-center text-center">
           <div className="flex items-center justify-center">
-            <h1 className="mr-3 text-5xl font-semibold">Doxly - Chat with any PDF!</h1>
-            <UserButton afterSignOutUrl="/" />
+          <h1 className="mr-3 text-5xl font-semibold">Doxly - Chat with any PDF!</h1>
+          <UserButton afterSignOutUrl="/" />
           </div>
 
-          <div className="flex mt-2 justify-center">
-            {isSignedIn && <Button>Go to Chats</Button>}
+          <div className="flex mt-2">
+            {isAuth && firstChat && (
+              <>
+                <Link href={`/chat/${firstChat.id}`}>
+                  <Button>
+                    Go to Chats <ArrowRight className="ml-2" />
+                  </Button>
+                </Link>
+                <div className="ml-3">
+                  <SubscriptionButton isPro={isPro} />
+                </div>
+              </>
+            )}
           </div>
 
-          <p className="max-w-xl mt-2 text-lg text-slate-600 text-center">
-            Join a community of students, researchers, and professionals to instantly understand research and answer questions with AI
+          <p className="max-w-xl mt-1 text-lg text-slate-600">
+          Join a community of students, researchers, and professionals to instantly understand research and answer questions with AI-powered chatbotts.
           </p>
+
           <div className="w-full mt-4">
-            {isSignedIn ? (
+            {isAuth ? (
               <FileUpload />
             ) : (
               <Link href="/sign-in">
-                <Button>Login to get started!
-                <LogIn className="w-4 h-4 ml-2"/>
+                <Button>
+                  Login to get Started!
+                  <LogIn className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
             )}

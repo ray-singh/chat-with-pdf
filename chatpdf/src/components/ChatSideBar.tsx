@@ -28,7 +28,7 @@ const ChatSideBar = ({ chats, chatId, isPro }: Props) => {
   const [loading, setLoading] = React.useState(false); // State to manage loading status (currently unused)
 
   return (
-    <div className="w-full max-h-screen overflow-scroll soff p-4 text-gray-200 bg-gray-900">
+    <div className="w-full h-screen max-h-screen overflow-scroll p-4 text-gray-200 bg-gray-900">
       {/* Button to start a new chat */}
       <Link href="/">
         <Button className="w-full border-dashed border-white border">
@@ -38,7 +38,7 @@ const ChatSideBar = ({ chats, chatId, isPro }: Props) => {
       </Link>
 
       {/* List of existing chats */}
-      <div className="flex max-h-screen overflow-scroll pb-20 flex-col gap-2 mt-4">
+      <div className="flex h-screen max-h-screen overflow-scroll pb-20 flex-col gap-2 mt-4">
         {chats.map((chat) => (
           <Link key={chat.id} href={`/chat/${chat.id}`}> {/* Navigates to the selected chat */}
             <div
@@ -59,4 +59,4 @@ const ChatSideBar = ({ chats, chatId, isPro }: Props) => {
   );
 };
 
-export default ChatSideBar; 
+export default ChatSideBar;
