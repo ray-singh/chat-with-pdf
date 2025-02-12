@@ -37,7 +37,7 @@ const ChatSideBar = ({ chats, chatId }: Props) => {
       </Link>
 
       {/* List of existing chats */}
-      <div className="flex h-screen max-h-screen overflow-scroll pb-20 flex-col gap-2 mt-4">
+      <div className="flex h-screen max-h-screen pb-20 flex-col gap-2 mt-4">
         {chats.map((chat) => (
           <Link key={chat.id} href={`/chat/${chat.id}`}> {/* Navigates to the selected chat */}
             <div
@@ -48,7 +48,7 @@ const ChatSideBar = ({ chats, chatId }: Props) => {
             >
               <MessageCircle className="mr-2" /> {/* Icon representing a chat message */}
               <p className="w-full overflow-hidden text-sm truncate whitespace-nowrap text-ellipsis">
-                {chat.pdfName} {/* Displays the name of the chat (likely related to a PDF file) */}
+                {chat.pdfName} {/* Displays the name of the chat */}
               </p>
             </div>
           </Link>
