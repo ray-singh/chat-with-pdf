@@ -45,7 +45,7 @@ const ChatComponent = ({ chatId }: Props) => {
 
   return (
     <div
-      className="relative max-h-screen overflow-scroll"
+      className="relative h-screen max-h-screen overflow-scroll"
       id="message-container"
     >
       {/* Header section */}
@@ -77,4 +77,4 @@ const ChatComponent = ({ chatId }: Props) => {
   );
 };
 
-export default ChatComponent; 
+export default ChatComponent;

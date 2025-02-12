@@ -6,8 +6,6 @@ import { chats, messages as _messages } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-// Specify that this route should run on the Edge runtime for better performance
-export const runtime = "edge";
 
 /**
  * POST endpoint handler for chat functionality

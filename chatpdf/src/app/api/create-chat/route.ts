@@ -5,7 +5,12 @@ import { getS3Url } from "@/lib/s3";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-// /api/create-chat
+/**
+ * POST endpoint handler for creating a new chat
+ * Loads a file from S3 into Pinecone, stores chat metadata in the database, and returns the chat ID
+ * @param req Incoming HTTP request containing file_key and file_name
+ * @returns JSON response containing the new chat ID
+ */
 export async function POST(req: Request, res: Response) {
   console.log("hello!")
   const { userId } = await auth();
@@ -14,10 +19,15 @@ export async function POST(req: Request, res: Response) {
   }
   
   try {
+    // Parse the request body to get file_key and file_name
     const body = await req.json();
     const { file_key, file_name } = body;
     console.log(file_key, file_name);
+
+    // Load the file from S3 into Pinecone
     await loadS3IntoPinecone(file_key);
+
+    // Insert chat metadata into the database and get the inserted chat ID
     const chat_id = await db
       .insert(chats)
       .values({
@@ -30,6 +40,7 @@ export async function POST(req: Request, res: Response) {
         insertedId: chats.id,
       });
 
+    // Return the new chat ID as a JSON response
     return NextResponse.json(
       {
         chat_id: chat_id[0].insertedId,
