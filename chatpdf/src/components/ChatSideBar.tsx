@@ -11,7 +11,6 @@ import axios from "axios";
 type Props = {
   chats: DrizzleChat[]; // Array of chat objects
   chatId: number;       // ID of the currently active chat
-  isPro: boolean;       // Boolean indicating if the user has a Pro subscription
 };
 
 /**
@@ -24,7 +23,7 @@ type Props = {
  * @param {Props} props - Contains chats array, current chatId, and user subscription status
  * @returns {JSX.Element} - The rendered sidebar component
  */
-const ChatSideBar = ({ chats, chatId, isPro }: Props) => {
+const ChatSideBar = ({ chats, chatId }: Props) => {
   const [loading, setLoading] = React.useState(false); // State to manage loading status (currently unused)
 
   return (

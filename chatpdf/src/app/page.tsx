@@ -4,8 +4,6 @@ import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { ArrowRight, LogIn } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
-import { checkSubscription } from "@/lib/subscription";
-import SubscriptionButton from "@/components/SubscriptionButton";
 import { db } from "@/lib/db";
 import { chats } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -13,7 +11,6 @@ import { eq } from "drizzle-orm";
 export default async function Home() {
   const { userId } = await auth();
   const isAuth = !!userId;
-  const isPro = await checkSubscription();
   let firstChat;
   if (userId) {
     firstChat = await db.select().from(chats).where(eq(chats.userId, userId));
@@ -26,28 +23,25 @@ export default async function Home() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="flex-col items-center text-center">
           <div className="flex items-center justify-center">
-          <h1 className="mr-3 text-5xl font-semibold">Doxly - Chat with any PDF!</h1>
-          <UserButton afterSignOutUrl="/" />
+            <h1 className="mr-3 text-5xl font-semibold">Doxly</h1>
+            <UserButton afterSignOutUrl="/" />
           </div>
 
-          <div className="flex mt-2">
+          <div className="flex mt-2 justify-center">
             {isAuth && firstChat && (
-              <>
-                <Link href={`/chat/${firstChat.id}`}>
-                  <Button>
-                    Go to Chats <ArrowRight className="ml-2" />
-                  </Button>
-                </Link>
-                <div className="ml-3">
-                  <SubscriptionButton isPro={isPro} />
-                </div>
-              </>
+              <Link href={`/chat/${firstChat.id}`}>
+                <Button>
+                  Go to Chats <ArrowRight className="ml-2" />
+                </Button>
+              </Link>
             )}
           </div>
 
-          <p className="max-w-xl mt-1 text-lg text-slate-600">
-          Join a community of students, researchers, and professionals to instantly understand research and answer questions with AI-powered chatbotts.
-          </p>
+          <div className="flex mt-2 justify-center">
+            <p className="max-w-xl mt-1 text-lg text-slate-600">
+            Transform your PDFs into interactive conversations. Ask questions, extract insights, and navigate your documents effortlessly with AI-powered assistance.
+            </p>
+          </div>
 
           <div className="w-full mt-4">
             {isAuth ? (

@@ -81,7 +81,8 @@ export async function POST(req: Request) {
       });
     }
 
-    return NextResponse.json({ response: aiResponse });
+    // Trigger page reload after response is inserted into the database
+    return NextResponse.json({ response: aiResponse, reload: true });
   } catch (error) {
     console.error('Error:', error);
     return NextResponse.json(
