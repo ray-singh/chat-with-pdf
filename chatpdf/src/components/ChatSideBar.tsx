@@ -5,7 +5,6 @@ import React from "react";
 import { Button } from "./ui/button"; 
 import { MessageCircle, PlusCircle } from "lucide-react"; 
 import { cn } from "@/lib/utils"; 
-import axios from "axios"; 
 
 // Props type definition for the ChatSideBar component
 type Props = {
@@ -24,8 +23,6 @@ type Props = {
  * @returns {JSX.Element} - The rendered sidebar component
  */
 const ChatSideBar = ({ chats, chatId }: Props) => {
-  const [loading, setLoading] = React.useState(false); // State to manage loading status (currently unused)
-
   return (
     <div className="w-full h-screen max-h-screen overflow-scroll p-4 text-gray-200 bg-gray-900">
       {/* Button to start a new chat */}

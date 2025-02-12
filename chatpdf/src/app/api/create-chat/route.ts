@@ -11,7 +11,7 @@ import { NextResponse } from "next/server";
  * @param req Incoming HTTP request containing file_key and file_name
  * @returns JSON response containing the new chat ID
  */
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request) {
   console.log("hello!")
   const { userId } = await auth();
   if (!userId) {

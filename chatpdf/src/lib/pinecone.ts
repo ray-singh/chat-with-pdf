@@ -30,7 +30,8 @@ export const truncateStringByBytes = (str: string, bytes: number) => {
 };
 
 async function prepareDocument(page: PDFPage) {
-  let { pageContent, metadata } = page;
+  const metadata = page.metadata;
+  let { pageContent } = page;
   pageContent = pageContent.replace(/\n/g, "");
 
   // Split the document into chunks
