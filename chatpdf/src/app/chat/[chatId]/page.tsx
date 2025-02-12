@@ -15,7 +15,7 @@ type Props = {
 };
 
 const ChatPage = async ({ params }: Props) => {
-  const { chatId } = await params; // Await the params object
+  const { chatId } = params; // Remove await from params
   const { userId } = await auth();
   if (!userId) {
     return redirect("/sign-in");
@@ -35,7 +35,7 @@ const ChatPage = async ({ params }: Props) => {
       <div className="flex w-full h-screen max-h-screen overflow-hidden">
         {/* chat sidebar */}
         <div className="flex-[1] max-w-xs h-screen max-h-screen">
-          <ChatSideBar chats={_chats} chatId={parseInt(chatId)}/>
+          <ChatSideBar chats={_chats} chatId={parseInt(chatId)} />
         </div>
         {/* pdf viewer */}
         <div className="h-screen max-h-screen p-4 overflow-auto flex-[5]">

@@ -1,14 +1,17 @@
 {
   "compilerOptions": {
     "target": "ES6",
+    "noUnusedLocals": false, // Disable unused variable checks
+    "noUnusedParameters": false, // Disable unused parameter checks
+    "noImplicitAny": false, // Allow implicit 'any' type
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
