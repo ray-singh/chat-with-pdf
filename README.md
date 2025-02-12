@@ -1,6 +1,7 @@
 # Doxly - AI-Powered PDF Chat
 
 Doxly is an interactive application that transforms PDF documents into conversational interfaces, allowing users to chat with their documents using AI.
+<img width="1508" alt="Screenshot 2025-02-12 at 3 49 21 PM" src="https://github.com/user-attachments/assets/5e9bf71d-efac-4d9e-8911-933ae98761e5" />
 
 ## Features
 
