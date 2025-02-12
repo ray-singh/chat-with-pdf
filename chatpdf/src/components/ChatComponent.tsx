@@ -1,13 +1,13 @@
-"use client"; 
+"use client";
 import React from "react";
-import { Input } from "./ui/input"; 
+import { Input } from "./ui/input";
 import { useChat } from "ai/react";
-import { Button } from "./ui/button"; 
-import { Send } from "lucide-react"; 
-import MessageList from "./MessageList"; 
-import { useQuery } from "@tanstack/react-query"; 
-import axios from "axios"; 
-import { Message } from "ai"; 
+import { Button } from "./ui/button";
+import { Send } from "lucide-react";
+import MessageList from "./MessageList";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { Message } from "ai";
 
 type Props = { chatId: number };
 
@@ -68,7 +68,7 @@ const ChatComponent = ({ chatId }: Props) => {
             placeholder="Ask any question..." // Placeholder text
             className="w-full" // Make the input take full width
           />
-          <Button  type="submit" className="bg-blue-600 ml-2"> {/* Send button */}
+          <Button type="submit" className="bg-blue-600 ml-2"> {/* Send button */}
             <Send className="h-4 w-4" /> {/* Send icon inside the button */}
           </Button>
         </div>

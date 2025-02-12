@@ -1,17 +1,20 @@
-import { streamText, Message } from "ai";
-import { openai } from '@ai-sdk/openai';
+import OpenAI from 'openai';
+import { Message } from 'ai';
 import { getContext } from "@/lib/context";
 import { db } from "@/lib/db";
 import { chats, messages as _messages } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 /**
  * POST endpoint handler for chat functionality
- * Processes incoming chat messages, retrieves relevant context, and streams AI responses
+ * Processes incoming chat messages, retrieves relevant context, and generates AI responses
  * @param req Incoming HTTP request containing messages array and chatId
- * @returns Streaming response containing AI-generated text
+ * @returns JSON response containing AI-generated text
  */
 export async function POST(req: Request) {
   try {
@@ -20,92 +23,69 @@ export async function POST(req: Request) {
 
     // Verify chat exists in database
     const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
-    if (_chats.length !== 1) {
-      return NextResponse.json({ error: "Chat not found" }, { status: 404 });
+    if (_chats.length != 1) {
+      return NextResponse.json({ error: "chat not found" }, { status: 404 });
     }
     const fileKey = _chats[0].fileKey;
 
     // Get the most recent message from the user
     const lastMessage = messages[messages.length - 1];
 
-    // Store the user's message in the database
-    await db.insert(_messages).values({
-      chatId,
-      content: lastMessage.content,
-      role: "user"
-    });
-
     // Get relevant context based on the user's message and associated file
     const context = await getContext(lastMessage.content, fileKey);
 
     // Configure system prompt with retrieved context
-    const systemPrompt = {
+    const prompt = {
       role: "system",
-      content: `AI assistant is a powerful, human-like artificial intelligence with traits including expert knowledge, helpfulness, cleverness, and articulateness.
- AI is well-mannered, friendly, kind, and inspiring, eager to provide vivid and thoughtful responses.
- START CONTEXT BLOCK
-${context}
- END OF CONTEXT BLOCK
- AI considers the CONTEXT BLOCK for answers. If not found, AI responds: "I'm sorry, but I don't know the answer to that question."
- AI does not invent information outside the provided context.`
+      content: `AI assistant is a brand new, powerful, human-like artificial intelligence.
+      The traits of AI include expert knowledge, helpfulness, cleverness, and articulateness.
+      AI is a well-behaved and well-mannered individual.
+      AI is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user.
+      AI has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation.
+      AI assistant is a big fan of Pinecone and Vercel.
+      START CONTEXT BLOCK
+      ${context}
+      END OF CONTEXT BLOCK
+      AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.
+      If the context does not provide the answer to question, the AI assistant will say, "I'm sorry, but I don't know the answer to that question".
+      AI assistant will not apologize for previous responses, but instead will indicated new information was gained.
+      AI assistant will not invent anything that is not drawn directly from the context.
+      `,
     };
 
-    // Initialize streaming response from OpenAI
-    const { textStream } = await streamText({
-      model: openai("gpt-3.5-turbo"),
-      // Include system prompt and only user messages in the conversation
-      messages: [systemPrompt, ...messages.filter((msg: Message) => msg.role === "user")]
+    // Save user message to db
+    await db.insert(_messages).values({
+      chatId,
+      content: lastMessage.content,
+      role: "user",
     });
 
-    // Set up text decoder for processing binary chunks
-    const decoder = new TextDecoder();
-    let result = ""; // Accumulate complete response
-
-    // Create readable stream to handle AI response
-    const stream = new ReadableStream({
-      start(controller) {
-        const reader = textStream.getReader();
-        
-        async function pump() {
-          while (true) {
-            const { value, done } = await reader.read();
-            
-            if (done) {
-              // Store complete AI response in database once stream ends
-              await db.insert(_messages).values({
-                chatId,
-                content: result,
-                role: "system"
-              });
-              controller.close();
-              break;
-            }
-
-            if (value) {
-              // Handle both string and binary chunk formats
-              if (typeof value === "string") {
-                const chunk = new TextEncoder().encode(value);
-                controller.enqueue(chunk);
-                result += value;
-              } else {
-                controller.enqueue(value);
-                result += decoder.decode(value);
-              }
-            }
-          }
-        }
-        pump();
-      }
+    // Get completion from OpenAI
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        prompt as OpenAI.Chat.ChatCompletionMessage,
+        ...messages.filter((message: Message) => message.role === "user"),
+      ],
     });
 
-    // Return streaming response
-    return new Response(stream, {
-      headers: { "Content-Type": "text/plain; charset=utf-8" },
-    });
-  } catch (error: any) {
-    // Handle any errors that occur during processing
+    const aiResponse = response.choices[0].message.content;
+
+    // Add null check before database insertion
+    if (aiResponse && chatId) {
+      // Save AI response to db
+      await db.insert(_messages).values({
+        chatId: chatId, // Ensure chatId is a number
+        content: aiResponse,
+        role: "system" as const, // Use const assertion for role
+      });
+    }
+
+    return NextResponse.json({ response: aiResponse });
+  } catch (error) {
+    console.error('Error:', error);
     return NextResponse.json(
-      { error: error?.message || "Internal Server Error" }, 
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
