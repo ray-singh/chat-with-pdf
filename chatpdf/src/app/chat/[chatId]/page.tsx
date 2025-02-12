@@ -7,6 +7,7 @@ import React from "react";
 import ChatSideBar from "@/components/ChatSideBar";
 import ChatComponent from "@/components/ChatComponent";
 import PDFViewer from "@/components/PDFViewer";
+import { NextPage } from "next";
 
 type Props = {
   params: {
@@ -14,8 +15,8 @@ type Props = {
   };
 };
 
-const ChatPage = async ({ params }: Props) => {
-  const { chatId } = params; // Remove await from params
+const ChatPage: NextPage<Props> = async ({ params }: Props) => {
+  const { chatId } = params;
   const { userId } = await auth();
   if (!userId) {
     return redirect("/sign-in");
