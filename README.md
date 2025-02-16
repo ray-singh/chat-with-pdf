@@ -72,6 +72,7 @@ Doxly is an interactive application that transforms PDF documents into conversat
 2. Upload a PDF document.
 3. Start chatting with your document.
 4. Navigate through your document using AI-powered assistance.
+5. NOTE: If a response is taking too long to appear, please reload the chat page. 
 
 ## Contributing
 
